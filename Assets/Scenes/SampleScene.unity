@@ -165,7 +165,7 @@ MonoBehaviour:
   - {fileID: 1313065392}
   - {fileID: 1510394559}
   mass: 2
-  initialVelocity: {x: 1.49, y: 1.09}
+  initialVelocity: {x: 0, y: 1.53}
 --- !u!114 &29677289 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6178830901122037234, guid: 16407da9fc1ed7647b5c018e901b7542, type: 3}
@@ -198,7 +198,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0629152323561924180dee25c2b29c23, type: 2}
+  - {fileID: 2100000, guid: d271ebc46b0f74b6fbf2eaab8586fb52, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -230,7 +230,7 @@ LineRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 1
+        value: 0.5
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -357,7 +357,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0629152323561924180dee25c2b29c23, type: 2}
+  - {fileID: 2100000, guid: d271ebc46b0f74b6fbf2eaab8586fb52, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -469,11 +469,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56862d8fdafa2a34daf04a984d733e1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numSteps: 10000
+  numSteps: 5764
   initialVelocities:
-  - {x: 1.49, y: 1.09}
+  - {x: 0, y: 1.53}
   - {x: 0, y: 1.31}
-  - {x: 0, y: -1.11}
+  - {x: 0, y: -1.23}
   planetTransform: {fileID: 0}
   planets:
   - {fileID: 29677284}
@@ -856,6 +856,7 @@ MonoBehaviour:
   speedZOOM: 100
   lerpSpeedZOOM: 120
   cameraFollowDistance: 2
+  rotateSpeed: 10
 --- !u!1001 &734376100
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1021,7 +1022,7 @@ MonoBehaviour:
   - {fileID: 1313065392}
   - {fileID: 1510394559}
   mass: 2
-  initialVelocity: {x: 0, y: -1.11}
+  initialVelocity: {x: 0, y: -1.23}
 --- !u!114 &1313065392 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6178830901122037234, guid: 16407da9fc1ed7647b5c018e901b7542, type: 3}
@@ -1054,7 +1055,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0629152323561924180dee25c2b29c23, type: 2}
+  - {fileID: 2100000, guid: d271ebc46b0f74b6fbf2eaab8586fb52, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

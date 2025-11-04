@@ -1,5 +1,6 @@
 using UnityEngine;
 using Mirror;
+using UnityEngine.UIElements;
 
 public class CameraFollow : MonoBehaviour
 {
@@ -10,24 +11,34 @@ public class CameraFollow : MonoBehaviour
     [SerializeField] private float speedZOOM;
     [SerializeField] private float lerpSpeedZOOM;
     [SerializeField] private float cameraFollowDistance;
+    [SerializeField] private float rotateSpeed;
 
     private Transform target;
 
     private void LateUpdate()
     {
-        if(target == null)
+        if (target == null)
         {
             FindLocalPlayer();
             return;
         }
+
+        // Rotation to match the player
+        Quaternion targetRotation = Quaternion.FromToRotation(transform.up, target.up) * transform.rotation;
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * rotateSpeed);
+
+        // Scrolling and following camera stuff
         float currentZOOM = ChangeZOOMByScroll(Camera.main.orthographicSize);
         Camera.main.orthographicSize = Mathf.Lerp(Camera.main.orthographicSize, currentZOOM, Time.deltaTime * lerpSpeedZOOM);
 
         Vector3 mouseScreenPosition = Input.mousePosition;
         Vector2 screenPositionNormalized = new Vector2(mouseScreenPosition.x / Screen.width, mouseScreenPosition.y / Screen.height);
-        transform.position = Vector3.Lerp(transform.position, new Vector3(target.position.x + (screenPositionNormalized.x - 0.5f) * (currentZOOM + cameraFollowDistance),
-        target.position.y + (screenPositionNormalized.y - 0.5f) * (currentZOOM + cameraFollowDistance), -10f), cameraSpeed * Time.deltaTime);
+        // Its close but still off, have to decide if it will be by crosshair or by mouse position and or an implementation that kinda does both.
+        Vector2 rotatedScreenPosition = targetRotation * screenPositionNormalized;
+        transform.position = Vector3.Lerp(transform.position, new Vector3(target.position.x + (rotatedScreenPosition.x - 0.5f) * (currentZOOM + cameraFollowDistance),
+        target.position.y + (rotatedScreenPosition.y - 0.5f) * (currentZOOM + cameraFollowDistance), -10f), cameraSpeed * Time.deltaTime);
 
+        
     }
 
     private float ChangeZOOMByScroll(float ZOOM)

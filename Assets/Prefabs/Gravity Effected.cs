@@ -34,14 +34,22 @@ public class GravityEffected : NetworkBehaviour
         }
     }
 
-    
+
     private void AlignPlayerToClosestGravity()
+    {
+        PlanetGravity closestPlanet = GetClosetPlanet();
+        Vector2 gravityDirection = closestPlanet.GetGravityDirection(transform.position, closestPlanet.transform.position);
+        float angle = Mathf.Atan2(gravityDirection.y, gravityDirection.x) * Mathf.Rad2Deg + 90f;
+        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, 0, angle), Time.deltaTime * 10);
+    }
+
+    public PlanetGravity GetClosetPlanet()
     {
         PlanetGravity closestPlanet = null;
         Vector2 difference = Vector2.zero;
-        foreach(PlanetGravity planet in planets)
+        foreach (PlanetGravity planet in planets)
         {
-            if(closestPlanet == null)
+            if (closestPlanet == null)
             {
                 closestPlanet = planet;
                 difference = transform.position - planet.transform.position;
@@ -51,14 +59,12 @@ public class GravityEffected : NetworkBehaviour
                 difference = transform.position - planet.transform.position;
                 Vector2 newDifference = transform.position - closestPlanet.transform.position;
 
-                if(difference.magnitude < newDifference.magnitude)
+                if (difference.magnitude < newDifference.magnitude)
                 {
                     closestPlanet = planet;
                 }
             }
         }
-        Vector2 gravityDirection = closestPlanet.GetGravityDirection(transform.position, closestPlanet.transform.position);
-        float angle = Mathf.Atan2(gravityDirection.y, gravityDirection.x) * Mathf.Rad2Deg + 90f;
-        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, 0, angle), Time.deltaTime * 10);
+        return closestPlanet;
     }
 }

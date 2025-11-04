@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+
 //using System.Numerics;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -26,36 +27,36 @@ public class OrbitVisualizor : MonoBehaviour
     private Transform sunPosition;
     private void Start()
     {
-        if(!Application.IsPlaying(gameObject))
+        if (!Application.IsPlaying(gameObject))
         {
             planets = GameObject.FindGameObjectsWithTag("Orbiting Body");
             planetGravities = FindObjectsOfType<PlanetGravity>();
         }
-
-        for(int i = 0; i < planets.Length; i++)
+        PredictOrbits(planets);
+        foreach(var (key, value) in planetOrbitPoints)
         {
-
+            DrawCurrentSteps(value, key);
         }
-        //DrawOrbit(planetOrbitPoints);
     }
     private void OnValidate()
     {
         PredictOrbits(planets); 
     }
+   
 
     // Future note: Place all calculations in a different script so that other objects can use the same calculation method.
     private void PredictOrbits(GameObject[] planets)
     {
         float timeStep = 0.1f;
-        
+
         planetOrbitPoints = new Dictionary<GameObject, List<Vector3>>();
         Dictionary<GameObject, Vector2> totalForces = new Dictionary<GameObject, Vector2>();
         Dictionary<GameObject, Vector2> velocities = new Dictionary<GameObject, Vector2>();
         Dictionary<GameObject, Vector2> positions = new Dictionary<GameObject, Vector2>();
 
-        
+
         int p = 0; // Temporary shit
-        foreach(GameObject planet in planets)
+        foreach (GameObject planet in planets)
         {
             planetOrbitPoints.Add(planet, new List<Vector3>());
             totalForces.Add(planet, new Vector2(0, 0));
@@ -67,43 +68,43 @@ public class OrbitVisualizor : MonoBehaviour
             p++;
         }
 
-        for(int i = 0; i < numSteps; i++)
+        for (int i = 0; i < numSteps; i++)
         {
             Dictionary<GameObject, Vector2> tempPositions = new Dictionary<GameObject, Vector2>();
 
-            foreach(GameObject planet in positions.Keys)
+            foreach (GameObject planet in positions.Keys)
             {
                 tempPositions.Add(planet, positions[planet]);
             }
-            foreach(GameObject planet in planets)
+            foreach (GameObject planet in planets)
             {
                 Vector2 totalForce = Vector2.zero;
 
-                foreach(PlanetGravity planetGravity in planetGravities)
+                foreach (PlanetGravity planetGravity in planetGravities)
                 {
                     PlanetGravity thisPlanetGravity = planet.GetComponent<PlanetGravity>();
                     GravityEffected thisPlanetEffect = planet.GetComponent<GravityEffected>();
 
-                    if(thisPlanetGravity != planetGravity)
+                    if (thisPlanetGravity != planetGravity)
                     {
-                        if(!tempPositions.ContainsKey(planetGravity.gameObject))
+                        if (!tempPositions.ContainsKey(planetGravity.gameObject))
                         {
                             Vector2 forceOfGravity = planetGravity.GetGravityForce(tempPositions[planet], thisPlanetEffect.mass);
                             totalForce += forceOfGravity;
-                            
+
                         }
                         else
                         {
                             Vector2 forceOfGravity = planetGravity.GetFutureGravityForce(tempPositions[planet], thisPlanetEffect.mass, tempPositions[planetGravity.gameObject]);
                             totalForce += forceOfGravity;
                         }
-                        
+
                     }
                 }
 
                 totalForces[planet] = totalForce;
             }
-            foreach(GameObject planet in planets)
+            foreach (GameObject planet in planets)
             {
                 GravityEffected thisPlanetEffect = planet.GetComponent<GravityEffected>();
 
@@ -114,7 +115,7 @@ public class OrbitVisualizor : MonoBehaviour
                 planetOrbitPoints[planet].Add(positions[planet]);
             }
         }
-        
+
     }
 
     private void DrawCurrentSteps(List<Vector3> points, GameObject planet)
@@ -122,12 +123,18 @@ public class OrbitVisualizor : MonoBehaviour
         // Add drawing of orbit points for one list at a time
         LineRenderer line = planet.GetComponent<LineRenderer>();
 
-        if(line != null)
-        {   
-            // Empty list to add all valid vectors to be drawn later
-            List<Vector3> newOrbitPoints = new List<Vector3>();
-            
-            newOrbitPoints.Add(points[0]);
+        if (line != null)
+        {
+            // Kinda works but it draws a small slice for some reason
+
+            for(int i = 0; i < points.Count; i++)
+            {
+                points[i] = new Vector3(points[i].x, points[i].y, planet.transform.position.z);
+            }
+
+            line.useWorldSpace = true;
+            line.positionCount = points.Count;
+            line.SetPositions(points.ToArray());
             
 
             // Adjust how often the dots repeat | From ChatGPT
