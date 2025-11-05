@@ -124,6 +124,12 @@ MonoBehaviour:
   syncInterval: 0
   moveSpeed: 5
   acceleration: 5
+  jumpForce: 7
+  flyAccel: 5
+  rotationForce: 0.8
+  planetAlignmentSpeed: 1
+  gravityEffects: {fileID: 0}
+  isGrounded: 0
 --- !u!114 &1533136697520598272
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -140,7 +146,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   planets: []
-  mass: 70
+  mass: 150
   initialVelocity: {x: 0, y: 6}
 --- !u!114 &-5172581125813873800
 MonoBehaviour:
