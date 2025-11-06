@@ -35,8 +35,15 @@ public class CameraFollow : MonoBehaviour
         Vector2 screenPositionNormalized = new Vector2(mouseScreenPosition.x / Screen.width, mouseScreenPosition.y / Screen.height);
         // Its close but still off, have to decide if it will be by crosshair or by mouse position and or an implementation that kinda does both.
         Vector2 rotatedScreenPosition = targetRotation * screenPositionNormalized;
-        transform.position = Vector3.Lerp(transform.position, new Vector3(target.position.x + (rotatedScreenPosition.x - 0.5f) * (currentZOOM + cameraFollowDistance),
-        target.position.y + (rotatedScreenPosition.y - 0.5f) * (currentZOOM + cameraFollowDistance), -10f), cameraSpeed * Time.deltaTime);
+
+        // This makes it so when the mouse is on the middle the camera will be centered on the player (I am not completely sure but I somehow fixed the math using vector math with drawings)
+        Vector2 offSetNormalized = new Vector2(rotatedScreenPosition.x + (0.5f * -(transform.up + transform.right).x), rotatedScreenPosition.y + (0.5f * -(transform.up + transform.right).y));
+        // Scale it by zoom and camera distance and some transform magic
+        Vector3 offset = offSetNormalized * (currentZOOM + cameraFollowDistance);
+        transform.position = Vector3.Lerp(transform.position, new Vector3(target.position.x + offset.x, target.position.y + offset.y, -10f), cameraSpeed * Time.deltaTime);
+
+        //transform.position = Vector3.Lerp(transform.position, new Vector3(target.position.x + (rotatedScreenPosition.x - (transform.right.x - 0.5f)) * (currentZOOM + cameraFollowDistance),
+        //target.position.y + (rotatedScreenPosition.y - (transform.up.y - 0.5f)) * (currentZOOM + cameraFollowDistance), -10f), cameraSpeed * Time.deltaTime);
 
         
     }
@@ -47,7 +54,7 @@ public class CameraFollow : MonoBehaviour
 
         if(scrollInput != 0)
         {
-            ZOOM += scrollInput * speedZOOM;
+            ZOOM += -scrollInput * speedZOOM;
             ZOOM = Mathf.Clamp(ZOOM, minZOOM, maxZOOM);
         }
         return ZOOM;

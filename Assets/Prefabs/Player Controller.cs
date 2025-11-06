@@ -16,7 +16,9 @@ public class PlayerController : NetworkBehaviour
     private Vector2 moveInput;
     private Rigidbody2D rb;
     public GravityEffected gravityEffects;
+    private PlanetGravity nearestPlanet;
     public bool isGrounded;
+    private Vector2 gravityDir;
     private void Start()
     {
         gravityEffects = this.GetComponent<GravityEffected>();
@@ -30,6 +32,32 @@ public class PlayerController : NetworkBehaviour
             float yMove = Input.GetAxis("Vertical");
 
             moveInput = new Vector2(xMove, yMove).normalized;
+
+            // Player Ground Check
+            nearestPlanet = gravityEffects.GetClosetPlanet();
+
+            // Gravity direction
+            gravityDir = (nearestPlanet.transform.position - transform.position).normalized;
+            SimpleDebugDraw.Arrow(transform.position, gravityDir * 2f, Color.green);
+
+            // Jumping
+            Vector2 distanceFromPlanet = nearestPlanet.transform.position - transform.position;
+
+            if (distanceFromPlanet.magnitude < (nearestPlanet.transform.localScale.magnitude / 2f))
+            {
+                isGrounded = true;
+            }
+            else
+            {
+                isGrounded = false;
+            }
+            SimpleDebugDraw.Arrow(transform.position, rb.velocity, Color.blue);
+            if (isGrounded && Input.GetButtonDown("Jump"))
+            {
+                SimpleDebugDraw.Arrow(transform.position, -gravityDir * jumpForce, Color.blue);
+
+                rb.velocity = -gravityDir * jumpForce;
+            }
         }
     }
     private void FixedUpdate()
@@ -47,14 +75,6 @@ public class PlayerController : NetworkBehaviour
             }
             */
 
-
-            // Player Ground Check
-            PlanetGravity nearestPlanet = gravityEffects.GetClosetPlanet();
-
-
-            // Gravity direction
-            Vector2 gravityDir = (nearestPlanet.transform.position - transform.position).normalized;
-            SimpleDebugDraw.Arrow(transform.position, gravityDir * 2f, Color.green);
 
             // Movement on planet
             if (isGrounded && (Input.GetKey("a") || Input.GetKey("d")))
@@ -77,25 +97,6 @@ public class PlayerController : NetworkBehaviour
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationForce);
             }
 
-
-            // Jumping
-            Vector2 distanceFromPlanet = nearestPlanet.transform.position - transform.position;
-
-            if (distanceFromPlanet.magnitude < (nearestPlanet.transform.localScale.magnitude / 2f))
-            {
-                isGrounded = true;
-            }
-            else
-            {
-                isGrounded = false;
-            }
-            SimpleDebugDraw.Arrow(transform.position, rb.velocity, Color.blue);
-            if (isGrounded && Input.GetButtonDown("Jump"))
-            {
-                SimpleDebugDraw.Arrow(transform.position, -gravityDir * jumpForce, Color.blue);
-
-                rb.velocity = -gravityDir * jumpForce;
-            }
 
             // Flying Up
             if (!isGrounded && Input.GetButton("Jump"))
