@@ -19,6 +19,7 @@ public class PlayerController : NetworkBehaviour
     private PlanetGravity nearestPlanet;
     public bool isGrounded;
     private Vector2 gravityDir;
+    private Vector3 mouseScreenPosition;
     private void Start()
     {
         gravityEffects = this.GetComponent<GravityEffected>();
@@ -40,7 +41,7 @@ public class PlayerController : NetworkBehaviour
             gravityDir = (nearestPlanet.transform.position - transform.position).normalized;
             SimpleDebugDraw.Arrow(transform.position, gravityDir * 2f, Color.green);
 
-            // Jumping
+            // Jumping and checks for on a planet
             Vector2 distanceFromPlanet = nearestPlanet.transform.position - transform.position;
 
             if (distanceFromPlanet.magnitude < (nearestPlanet.transform.localScale.magnitude / 2f))
@@ -58,6 +59,9 @@ public class PlayerController : NetworkBehaviour
 
                 rb.velocity = -gravityDir * jumpForce;
             }
+
+            // Mouse input
+            Vector3 mouseScreenPosition = Input.mousePosition;
         }
     }
     private void FixedUpdate()
@@ -89,8 +93,8 @@ public class PlayerController : NetworkBehaviour
             if (!isGrounded && (Input.GetKey("a") || Input.GetKey("d")))
             {
                 Vector2 moveDirection = (moveInput.x * transform.right * moveSpeed).normalized;
-                SimpleDebugDraw.Arrow(transform.position, transform.right * moveInput.x * moveSpeed, Color.green);
-                rb.AddForce(moveInput.x * transform.right * moveSpeed);
+                SimpleDebugDraw.Arrow(transform.position, transform.right * Vector2.one * moveSpeed, Color.green);
+                rb.AddForce(moveInput.x * Vector2.one * moveSpeed);
 
                 float targetAngle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg - 90f;
                 Quaternion targetRotation = Quaternion.Euler(0, 0, targetAngle);
