@@ -26,21 +26,8 @@ public class GravityEffected : NetworkBehaviour
             if(this.GetComponent<PlanetGravity>() != planet)
             {
                 rb.velocity += planet.GetGravityForce(transform.position, mass) * Time.fixedDeltaTime;
-                if(isLocalPlayer)
-                {
-                    AlignPlayerToClosestGravity();
-                }
             }
         }
-    }
-
-
-    private void AlignPlayerToClosestGravity()
-    {
-        PlanetGravity closestPlanet = GetClosetPlanet();
-        Vector2 gravityDirection = closestPlanet.GetGravityDirection(transform.position, closestPlanet.transform.position);
-        float angle = Mathf.Atan2(gravityDirection.y, gravityDirection.x) * Mathf.Rad2Deg + 90f;
-        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, 0, angle), Time.deltaTime * 10);
     }
 
     public PlanetGravity GetClosetPlanet()
