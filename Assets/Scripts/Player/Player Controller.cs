@@ -93,8 +93,8 @@ public class PlayerController : NetworkBehaviour
             if (!isGrounded && (Input.GetKey("a") || Input.GetKey("d")))
             {
                 Vector2 moveDirection = (moveInput.x * transform.right * moveSpeed).normalized;
-                SimpleDebugDraw.Arrow(transform.position, transform.right * Vector2.one * moveSpeed, Color.green);
-                rb.AddForce(moveInput.x * Vector2.one * moveSpeed);
+                SimpleDebugDraw.Arrow(transform.position, transform.right * moveInput.x * moveSpeed, Color.green);
+                rb.AddForce(moveInput.x * transform.right * moveSpeed);
 
                 float targetAngle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg - 90f;
                 Quaternion targetRotation = Quaternion.Euler(0, 0, targetAngle);
