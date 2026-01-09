@@ -7,12 +7,14 @@ public class WeaponHandler : MonoBehaviour
 {
     public Transform weaponSlot;
     public WeaponBase currentWeapon;
+    private Camera cam;
 
     //Test
     public GunData starterGun;
 
     void Start()
     {
+        cam = Camera.main;
         EquipWeapon(starterGun);
     }
 
@@ -23,7 +25,13 @@ public class WeaponHandler : MonoBehaviour
             Destroy(currentWeapon.gameObject);
         }
 
+        // TODO:
+        // Screw this way of rotation, use old method for rotations and account for camera/player rotation.
+        weaponSlot.position += newGunData.posOffset;
+
+        //var weaponObj = Instantiate(newGunData.weaponPrefab, newGunData.posOffset + weaponSlot.position, Quaternion.identity);
         var weaponObj = Instantiate(newGunData.weaponPrefab, weaponSlot);
+       
         currentWeapon = weaponObj.GetComponent<WeaponBase>();
         currentWeapon.gunData = newGunData;
         currentWeapon.Initialize(this);
@@ -39,11 +47,15 @@ public class WeaponHandler : MonoBehaviour
     private void RotateWeapon()
     {
         // Fun stuff to work on here
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 dir = mousePos - weaponSlot.position;
-        SimpleDebugDraw.Arrow(weaponSlot.position, dir, Color.magenta);
+        Vector3 mouseScreenPos = Input.mousePosition;
+        Vector3 weaponScreenPos = cam.WorldToScreenPoint(weaponSlot.position);
+
+        Vector2 dir = mouseScreenPos - weaponScreenPos;
+        SimpleDebugDraw.Arrow(weaponScreenPos, dir, Color.magenta);
+
         float angle = Mathf.Atan2(dir.x, dir.y) * Mathf.Rad2Deg;
-        currentWeapon.transform.rotation = Quaternion.Euler(0, 0, angle);
+        //Debug.Log(angle);
+        currentWeapon.transform.rotation = Quaternion.Euler(0, 0, -(angle+90f));
     }
 
     public void OnFirePressed()

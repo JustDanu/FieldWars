@@ -15,6 +15,7 @@ public class GunData : ScriptableObject
 
     [Header("Prefab")]
     public GameObject weaponPrefab;
+    public Vector3 posOffset;
 
     [Header("FX")]
     public GameObject muzzleFlash;
