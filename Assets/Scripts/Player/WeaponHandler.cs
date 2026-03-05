@@ -7,7 +7,10 @@ public class WeaponHandler : MonoBehaviour
 {
     public Transform weaponSlot;
     public WeaponBase currentWeapon;
+    // Temp
+    [SerializeField] private float radius = 1.5f;
     private Camera cam;
+    private float angle;
 
     //Test
     public GunData starterGun;
@@ -46,21 +49,26 @@ public class WeaponHandler : MonoBehaviour
 
     private void RotateWeapon()
     {
-        // Fun stuff to work on here
-        Vector3 mouseScreenPos = Input.mousePosition;
-        Vector3 weaponScreenPos = cam.WorldToScreenPoint(weaponSlot.position);
+        // Chatgpt implementation using old implem
 
-        Vector2 dir = mouseScreenPos - weaponScreenPos;
-        SimpleDebugDraw.Arrow(weaponScreenPos, dir, Color.magenta);
+        Vector3 mouseWorld = cam.ScreenToWorldPoint(Input.mousePosition);
+        mouseWorld.z = 0f;
 
-        float angle = Mathf.Atan2(dir.x, dir.y) * Mathf.Rad2Deg;
-        //Debug.Log(angle);
-        currentWeapon.transform.rotation = Quaternion.Euler(0, 0, -(angle+90f));
+        // Direction from player center → mouse
+        Vector2 dir = (mouseWorld - transform.position).normalized;
+
+        // 1. Position weapon in a circle around player
+        currentWeapon.transform.position = transform.position + (Vector3)(dir * radius);
+
+        // 2. Rotate weapon to face the mouse
+        angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        currentWeapon.transform.rotation = Quaternion.Euler(0, 0, angle);
+
     }
 
     public void OnFirePressed()
     {
-        currentWeapon?.TriggerPress();
+        currentWeapon?.TriggerPress(angle);
     }
 
     public void OnFireRelease()

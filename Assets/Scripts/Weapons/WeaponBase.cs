@@ -11,7 +11,7 @@ public class WeaponBase : MonoBehaviour, IWeapon
         this.handler = handler;
     }
 
-    public virtual void TriggerPress()
+    public virtual void TriggerPress(float angle)
     {
         
     }

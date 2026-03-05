@@ -7,9 +7,12 @@ public class GunWeapon : WeaponBase
 {
     public Transform firePoint;
     private float nextFire;
+    private float angle;
 
-    public override void TriggerPress()
+    public override void TriggerPress(float angle)
     {
+        Debug.Log("" + angle);
+        this.angle = angle;
         TryShoot();
     }
 
@@ -26,7 +29,7 @@ public class GunWeapon : WeaponBase
         if (Time.time < nextFire) return;
 
         nextFire = Time.time + 1f / gunData.fireRate;
-        var proj = Instantiate(gunData.projectileData.prefab, firePoint.position, firePoint.rotation);
+        var proj = Instantiate(gunData.projectileData.prefab, firePoint.position, Quaternion.Euler(0, 0, angle));
 
         proj.GetComponent<ProjectileBase>().Initialize(gunData.projectileData);
     }
