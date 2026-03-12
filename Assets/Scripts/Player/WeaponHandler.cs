@@ -10,7 +10,7 @@ public class WeaponHandler : MonoBehaviour
     // Temp
     [SerializeField] private float radius = 1.5f;
     private Camera cam;
-    private float angle;
+    public Vector2 dir;
 
     //Test
     public GunData starterGun;
@@ -51,28 +51,35 @@ public class WeaponHandler : MonoBehaviour
     {
         // Chatgpt implementation using old implem
 
-        Vector3 mouseWorld = cam.ScreenToWorldPoint(Input.mousePosition);
-        mouseWorld.z = 0f;
-
-        // Direction from player center → mouse
-        Vector2 dir = (mouseWorld - transform.position).normalized;
-
+        dir = GetMouseDirection();
         // 1. Position weapon in a circle around player
         currentWeapon.transform.position = transform.position + (Vector3)(dir * radius);
 
         // 2. Rotate weapon to face the mouse
-        angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         currentWeapon.transform.rotation = Quaternion.Euler(0, 0, angle);
 
     }
 
     public void OnFirePressed()
     {
-        currentWeapon?.TriggerPress(angle);
+        dir = GetMouseDirection();
+        Debug.Log("" + dir);
+        currentWeapon?.TriggerPress(dir);
     }
 
     public void OnFireRelease()
     {
         currentWeapon?.TriggerRelease();
+    }
+
+    // Thank you chpt for this cleaner idea
+    private Vector2 GetMouseDirection()
+    {
+        Vector3 mouseWorld = cam.ScreenToWorldPoint(Input.mousePosition);
+        mouseWorld.z = 0f;
+
+        // Direction from player center → mouse
+        return (mouseWorld - transform.position).normalized;
     }
 }

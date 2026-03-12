@@ -1,8 +1,8 @@
-
+using UnityEngine;
 public interface IWeapon
 {
     void Initialize(WeaponHandler handler);
-    void TriggerPress(float angle);
+    void TriggerPress(Vector2 dir);
     void TriggerRelease();
     void UpdateWeapon();
 }
