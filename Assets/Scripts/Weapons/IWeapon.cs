@@ -4,5 +4,5 @@ public interface IWeapon
     void Initialize(WeaponHandler handler);
     void TriggerPress(Vector2 dir);
     void TriggerRelease();
-    void UpdateWeapon();
+    void UpdateWeapon(Vector2 dir);
 }

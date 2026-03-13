@@ -21,7 +21,7 @@ public class WeaponBase : MonoBehaviour, IWeapon
         
     }
 
-    public virtual void UpdateWeapon()
+    public virtual void UpdateWeapon(Vector2 dir)
     {
         
     }

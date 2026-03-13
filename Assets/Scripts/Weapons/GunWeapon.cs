@@ -16,8 +16,9 @@ public class GunWeapon : WeaponBase
         TryShoot();
     }
 
-    public override void UpdateWeapon()
+    public override void UpdateWeapon(Vector2 dir)
     {
+        this.dir = dir;
         if (Input.GetMouseButton(0))
         {
             TryShoot();
@@ -29,10 +30,12 @@ public class GunWeapon : WeaponBase
         if (Time.time < nextFire) return;
 
         nextFire = Time.time + 1f / gunData.fireRate;
-        var proj = Instantiate(gunData.projectileData.prefab, firePoint.position, Quaternion.Euler(0, 0, 0));
+        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        var proj = Instantiate(gunData.projectileData.prefab, firePoint.position, Quaternion.Euler(0, 0, angle));
 
+        proj.GetComponent<ProjectileBase>().dir = this.dir;
         proj.GetComponent<ProjectileBase>().Initialize(gunData.projectileData);
         //Debug.Log("" + dir);
-        proj.GetComponent<ProjectileBase>().dir = this.dir;
+        
     }
 }

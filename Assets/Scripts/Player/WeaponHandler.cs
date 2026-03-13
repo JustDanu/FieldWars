@@ -42,7 +42,7 @@ public class WeaponHandler : MonoBehaviour
 
     void Update()
     {
-        currentWeapon?.UpdateWeapon();
+        currentWeapon?.UpdateWeapon(dir);
 
         RotateWeapon();
     }

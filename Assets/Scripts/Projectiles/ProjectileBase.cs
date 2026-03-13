@@ -13,12 +13,13 @@ public class ProjectileBase : MonoBehaviour
         rb = this.GetComponent<Rigidbody2D>();
 
         Destroy(gameObject, projData.lifeTime);
-        //Debug.Log("" + dir);
-        rb.AddForce(dir * projData.speed, ForceMode2D.Impulse);
+        SimpleDebugDraw.Arrow(transform.position, dir, Color.red);
+        rb.velocity = dir * projData.speed;
     }
 
     void FixedUpdate()
     {
-        
+        float angle = Mathf.Atan2(rb.velocity.y, rb.velocity.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0, 0, angle);
     }
 }
