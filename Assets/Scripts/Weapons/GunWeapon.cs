@@ -19,7 +19,11 @@ public class GunWeapon : WeaponBase
     public override void UpdateWeapon(Vector2 dir)
     {
         this.dir = dir;
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButtonDown(0))
+        {
+            
+        }
+        if (Input.GetMouseButtonUp(0))
         {
             TryShoot();
         }
