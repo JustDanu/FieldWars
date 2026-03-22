@@ -8,6 +8,6 @@ public class GravityPlanet : MonoBehaviour
 
     public GravitySource GetSource()
     {
-        return new GravitySource(transform.position, mass);
+        return new GravitySource(gameObject.GetInstanceID(), transform.position, mass);
     }
 }

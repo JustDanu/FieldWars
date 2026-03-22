@@ -29,7 +29,10 @@ public class OrbitVisualizor : MonoBehaviour
     }
    
 
-    // Future note: Place all calculations in a different script so that other objects can use the same calculation method.
+    // Now I gotta have this work with RB behaviours or i guess velocity affecting because
+    // changing positions in fixedUpdate might be janky because without RB there would be no
+    // collisions which means the player wont be able to stand on planets n shi, so gotta make
+    // a script that changed the velocity of the RB between predictions.
     private List<List<Vector2>> PredictOrbits()
     {
         bodies = FindObjectsOfType<GravityBody>();
@@ -43,29 +46,22 @@ public class OrbitVisualizor : MonoBehaviour
             bodyStates.Add(b.GetState());
         }
 
-        List<GravitySource> gravitySources = new List<GravitySource>();
-
-        foreach (var s in sources)
-        {
-            gravitySources.Add(s.GetSource());
-        }
-
-        return new List<List<Vector2>>(TrajectorySimulator.Predict(bodyStates, gravitySources, numSteps, 0.1f));
+        return new List<List<Vector2>>(TrajectorySimulator.Predict(bodyStates, numSteps, 0.05f));
     }
 
     private void DrawCurrentSteps(List<List<Vector2>> paths)
     {
         foreach (var body in bodies)
         {
+            
             LineRenderer line = body.GetComponent<LineRenderer>();
-            line.widthMultiplier = 2f;
-            line.useWorldSpace = true;
-            line.positionCount = 0;
-
             if (line == null)
             {
                 line = body.gameObject.AddComponent<LineRenderer>();
             }
+            line.widthMultiplier = 2f;
+            line.useWorldSpace = true;
+            line.positionCount = 0;
         }
 
         for (int i = 0; i < bodies.Length; i++)
