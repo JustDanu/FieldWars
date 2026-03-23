@@ -48,6 +48,7 @@ GameObject:
   - component: {fileID: -7364985505321873434}
   - component: {fileID: 5918904539289723838}
   - component: {fileID: 8021558602389388236}
+  - component: {fileID: 2912598170140221114}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -161,7 +162,7 @@ MonoBehaviour:
   flyAccel: 5
   rotationForce: 0.8
   planetAlignmentSpeed: 1
-  gravityEffects: {fileID: 0}
+  bodies: []
   isGrounded: 0
 --- !u!114 &1533136697520598272
 MonoBehaviour:
@@ -297,3 +298,20 @@ MonoBehaviour:
   radius: 1.5
   dir: {x: 0, y: 0}
   starterGun: {fileID: 11400000, guid: 424b61d67e1d1ee4298a073dfa7d601e, type: 2}
+--- !u!114 &2912598170140221114
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7928723650747581274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46e6c41d80588394e9d8a284909d3590, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mass: 500
+  velocity: {x: 0, y: 0}
+  affectsGravity: 0
+  affectedByGravity: 1
+  rb: {fileID: -7364985505321873434}

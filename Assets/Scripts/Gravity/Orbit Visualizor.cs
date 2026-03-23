@@ -36,7 +36,6 @@ public class OrbitVisualizor : MonoBehaviour
     private List<List<Vector2>> PredictOrbits()
     {
         bodies = FindObjectsOfType<GravityBody>();
-        sources = FindObjectsOfType<GravityPlanet>();
 
         List<BodyState> bodyStates = new List<BodyState>();
 
@@ -46,7 +45,7 @@ public class OrbitVisualizor : MonoBehaviour
             bodyStates.Add(b.GetState());
         }
 
-        return new List<List<Vector2>>(TrajectorySimulator.Predict(bodyStates, numSteps, 0.05f));
+        return new List<List<Vector2>>(TrajectorySimulator.Predict(bodyStates, numSteps, 0.1f));
     }
 
     private void DrawCurrentSteps(List<List<Vector2>> paths)

@@ -46,7 +46,7 @@ public static class TrajectorySimulator
                 if (!other.affectsGravity) continue; // skip objects that dont affect gravity
 
                 Vector2 dir = other.position - body.position;
-                float distSq = Mathf.Max(dir.sqrMagnitude, 0.5f);
+                float distSq = Mathf.Max(dir.sqrMagnitude, 0.01f);
 
                 float accel = other.mass / distSq;
 

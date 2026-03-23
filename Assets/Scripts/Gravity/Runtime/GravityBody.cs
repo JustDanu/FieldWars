@@ -1,18 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 
-public class GravityBody : MonoBehaviour
+public class GravityBody : NetworkBehaviour
 {
     public float mass;
     public Vector2 velocity;
     public bool affectsGravity;
     public bool affectedByGravity;
-    private Rigidbody2D rb;
+    public Rigidbody2D rb;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        rb.velocity = velocity;
+    }
+
+    public override void OnStartServer()
+    {
+        Debug.Log("Server started");
         rb.velocity = velocity;
     }
 

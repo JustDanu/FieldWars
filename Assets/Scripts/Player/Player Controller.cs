@@ -17,7 +17,7 @@ public class PlayerController : NetworkBehaviour
     private Vector2 moveInput;
     private Rigidbody2D rb;
 
-    private GravityBody[] bodies;
+    public GravityBody[] bodies;
     //public GravityEffected gravityEffects;
     private BodyState nearestPlanet;
 
@@ -44,14 +44,14 @@ public class PlayerController : NetworkBehaviour
             nearestPlanet = GetClosetPlanet();
 
             // Gravity direction
-            Vector2 gravityVector = nearestPlanet.position - transform.position;
+            Vector2 gravityVector = nearestPlanet.position - new Vector2(transform.position.x, transform.position.y);
             gravityDir = gravityVector.normalized;
             SimpleDebugDraw.Arrow(transform.position, gravityDir * 2f, Color.green);
 
             // Jumping and checks for on a planet
             float distanceFromPlanet = gravityVector.magnitude;
 
-            if (distanceFromPlanet < (nearestPlanet.size))
+            if (distanceFromPlanet < nearestPlanet.size)
             {
                 isGrounded = true;
             }
@@ -131,11 +131,11 @@ public class PlayerController : NetworkBehaviour
     private void AlignPlayerToClosestGravity()
     {
         BodyState closestPlanet = GetClosetPlanet();
-        Vector2 distanceVector = closestPlanet.position - transform.position;
+        Vector2 distanceVector = closestPlanet.position - new Vector2(transform.position.x, transform.position.y);
         float distanceFromPlanet = distanceVector.magnitude;
         
 
-        if(distanceFromPlanet < (closestPlanet.transform.localScale.magnitude))
+        if(distanceFromPlanet < closestPlanet.size)
         {
             Vector2 gravityDirection = distanceVector.normalized;
 
@@ -147,23 +147,25 @@ public class PlayerController : NetworkBehaviour
 
     public BodyState GetClosetPlanet()
     {
-        BodyState closestPlanet = null;
+        BodyState closestPlanet = new BodyState();
         Vector2 difference = Vector2.zero;
-        foreach (BodyState body in bodies)
+        foreach (var body in bodies)
         {
-            if (closestPlanet == null)
+            if(this.gameObject == body.gameObject) continue; // Skip player checking itself
+
+            if (closestPlanet.Equals(new BodyState()))
             {
-                closestPlanet = body;
-                difference = transform.position - body.position;
+                closestPlanet = body.GetState();
+                difference = new Vector2(transform.position.x, transform.position.y) - closestPlanet.position;
             }
             else
             {
-                difference = transform.position - body.position;
-                Vector2 newDifference = transform.position - closestPlanet.position;
+                difference = new Vector2(transform.position.x, transform.position.y) - body.GetState().position;
+                Vector2 newDifference = new Vector2(transform.position.x, transform.position.y) - closestPlanet.position;
 
                 if (difference.magnitude < newDifference.magnitude)
                 {
-                    closestPlanet = planet;
+                    closestPlanet = body.GetState();
                 }
             }
         }
