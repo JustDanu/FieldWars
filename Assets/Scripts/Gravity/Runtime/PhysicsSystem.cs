@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class GravityPhysicsSystem : MonoBehaviour
 {
-    public float dt;
 
     private GravityBody[] bodies;
 
@@ -23,7 +22,7 @@ public class GravityPhysicsSystem : MonoBehaviour
             states.Add(body.GetState());
         }
             
-        TrajectorySimulator.SimulateStep(states, dt);
+        TrajectorySimulator.SimulateStep(states, Time.fixedDeltaTime);
 
         for (int i = 0; i < bodies.Length; i++)
         {

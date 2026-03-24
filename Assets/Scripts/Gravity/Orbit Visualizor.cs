@@ -45,7 +45,7 @@ public class OrbitVisualizor : MonoBehaviour
             bodyStates.Add(b.GetState());
         }
 
-        return new List<List<Vector2>>(TrajectorySimulator.Predict(bodyStates, numSteps, 0.1f));
+        return new List<List<Vector2>>(TrajectorySimulator.Predict(bodyStates, numSteps, Time.fixedDeltaTime));
     }
 
     private void DrawCurrentSteps(List<List<Vector2>> paths)
