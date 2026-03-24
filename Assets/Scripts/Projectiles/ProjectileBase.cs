@@ -7,15 +7,28 @@ public class ProjectileBase : MonoBehaviour
     protected ProjectileData projData;
     public Rigidbody2D rb;
     public Vector2 dir;
+    private SpriteRenderer sprite;
     public virtual void Initialize(ProjectileData projectileData)
     {
         projData = projectileData;
+        sprite = this.GetComponent<SpriteRenderer>();
         rb = this.GetComponent<Rigidbody2D>();
-
-        Destroy(gameObject, projData.lifeTime);
-        SimpleDebugDraw.Arrow(transform.position, dir, Color.red);
-        rb.velocity = dir * projData.speed;
+        sprite.enabled = false;
+        rb.simulated = false;
     }
+
+    public void updateVelocity(Vector2 direction)
+    {
+        rb.velocity = direction * projData.speed;
+    }
+
+    public void enableObject()
+    {
+        rb.simulated = true;
+        sprite.enabled = true;
+        Destroy(this, 20f);
+    }
+
 
     void FixedUpdate()
     {

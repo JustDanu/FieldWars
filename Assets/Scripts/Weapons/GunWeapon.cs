@@ -63,8 +63,6 @@ public class GunWeapon : WeaponBase
 
         currentProjectile.dir = dir;
         currentProjectile.Initialize(gunData.projectileData);
-
-        //currentProjectile.SetPreview(true);
     }
 
     void UpdateAiming()
@@ -76,15 +74,16 @@ public class GunWeapon : WeaponBase
         currentProjectile.transform.position = firePoint.position;
         currentProjectile.transform.rotation = Quaternion.Euler(0, 0, angle);
 
-        currentProjectile.dir = dir;
+        currentProjectile.updateVelocity(dir);
+        OrbitVisualizor.Instance.drawNextSteps(1000);
+        
     }
 
     void ReleaseShot()
     {
         if (currentProjectile == null) return;
 
-        //currentProjectile.SetPreview(false); // enable physics
-        //currentProjectile.Fire(); // apply velocity
+        currentProjectile.enableObject();
 
         currentProjectile = null;
     }

@@ -8,23 +8,27 @@ public class OrbitVisualizor : MonoBehaviour
     private int numSteps;
     private GravityBody[] bodies;
     private GravityPlanet[] sources;
+
+    public static OrbitVisualizor Instance;
+
+    void Awake()
+    {
+        Instance = this;
+    }
+
     private void Start()
     {
-        if (!Application.IsPlaying(gameObject))
-        {
-            
-        }
-        PredictOrbits();
-        /*
-        foreach(var (key, value) in planetOrbitPoints)
-        {
-            DrawCurrentSteps(value, key);
-        }
-        */
+        
     }
     private void OnValidate()
     {
-        List<List<Vector2>> paths = PredictOrbits();
+        List<List<Vector2>> paths = PredictOrbits(numSteps);
+        DrawCurrentSteps(paths);
+    }
+
+    public void drawNextSteps(int steps)
+    {
+        List<List<Vector2>> paths = PredictOrbits(steps);
         DrawCurrentSteps(paths);
     }
    
@@ -33,7 +37,7 @@ public class OrbitVisualizor : MonoBehaviour
     // changing positions in fixedUpdate might be janky because without RB there would be no
     // collisions which means the player wont be able to stand on planets n shi, so gotta make
     // a script that changed the velocity of the RB between predictions.
-    private List<List<Vector2>> PredictOrbits()
+    private List<List<Vector2>> PredictOrbits(int steps)
     {
         bodies = FindObjectsOfType<GravityBody>();
 
@@ -45,7 +49,7 @@ public class OrbitVisualizor : MonoBehaviour
             bodyStates.Add(b.GetState());
         }
 
-        return new List<List<Vector2>>(TrajectorySimulator.Predict(bodyStates, numSteps, Time.fixedDeltaTime));
+        return new List<List<Vector2>>(TrajectorySimulator.Predict(bodyStates, steps, Time.fixedDeltaTime));
     }
 
     private void DrawCurrentSteps(List<List<Vector2>> paths)
