@@ -46,7 +46,7 @@ public class PlayerController : NetworkBehaviour
             // Gravity direction
             Vector2 gravityVector = nearestPlanet.position - new Vector2(transform.position.x, transform.position.y);
             gravityDir = gravityVector.normalized;
-            SimpleDebugDraw.Arrow(transform.position, gravityDir * 2f, Color.green);
+            SimpleDebugDraw.Arrow(transform.position, gravityDir * 2f, Color.white);
 
             // Jumping and checks for on a planet
             float distanceFromPlanet = gravityVector.magnitude;

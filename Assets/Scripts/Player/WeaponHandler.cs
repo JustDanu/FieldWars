@@ -1,9 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 
-public class WeaponHandler : MonoBehaviour
+public class WeaponHandler : NetworkBehaviour
 {
     public Transform weaponSlot;
     public WeaponBase currentWeapon;
