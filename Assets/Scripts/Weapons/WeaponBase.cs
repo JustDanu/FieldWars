@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 
-public class WeaponBase : MonoBehaviour, IWeapon
+public class WeaponBase : NetworkBehaviour, IWeapon
 {
     protected WeaponHandler handler;
     public GunData gunData;

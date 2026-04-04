@@ -165,6 +165,7 @@ MonoBehaviour:
   planetAlignmentSpeed: 1
   bodies: []
   isGrounded: 0
+  cameraPrefab: {fileID: 6021242497485365956, guid: b911121d094988a47a15f086c17f6ae4, type: 3}
 --- !u!114 &1533136697520598272
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -294,6 +295,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d35266a3497b0814e8abf1cefc3cff73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   weaponSlot: {fileID: 7958005370401849087}
   currentWeapon: {fileID: 0}
   radius: 1.5

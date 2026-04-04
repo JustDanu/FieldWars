@@ -43,6 +43,8 @@ public class WeaponHandler : NetworkBehaviour
 
     void Update()
     {
+        if(!isLocalPlayer) return;
+        
         currentWeapon?.UpdateWeapon(dir);
 
         RotateWeapon();

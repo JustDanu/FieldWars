@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Mirror;
 using Mirror.Examples.Tanks;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -58,11 +59,11 @@ public class GunWeapon : WeaponBase
             firePoint.position,
             Quaternion.Euler(0, 0, angle)
         );
-
         currentProjectile = projObj.GetComponent<ProjectileBase>();
 
         currentProjectile.dir = dir;
         currentProjectile.Initialize(gunData.projectileData);
+        NetworkServer.Spawn(projObj);
     }
 
     void UpdateAiming()

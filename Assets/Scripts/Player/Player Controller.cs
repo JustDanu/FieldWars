@@ -23,7 +23,16 @@ public class PlayerController : NetworkBehaviour
 
     public bool isGrounded;
     private Vector2 gravityDir;
-    private Vector3 mouseScreenPosition;
+
+    public CameraFollow cameraPrefab;
+
+    public override void OnStartLocalPlayer()
+    {
+        base.OnStartLocalPlayer();
+
+        CameraFollow cam = Instantiate(cameraPrefab);
+        cam.SetTarget(transform);
+    }
 
     private void Start()
     {

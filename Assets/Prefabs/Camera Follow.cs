@@ -17,12 +17,6 @@ public class CameraFollow : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (target == null)
-        {
-            FindLocalPlayer();
-            return;
-        }
-
         // Rotation to match the player
         Quaternion targetRotation = Quaternion.FromToRotation(transform.up, target.up) * transform.rotation;
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * rotateSpeed);
@@ -60,13 +54,8 @@ public class CameraFollow : MonoBehaviour
         return ZOOM;
     }
 
-    private void FindLocalPlayer()
+    public void SetTarget(Transform t)
     {
-        
-        if(NetworkClient.localPlayer != null)
-        {
-            target = NetworkClient.localPlayer.transform;
-        }
-        
+        target = t;
     }
 }
