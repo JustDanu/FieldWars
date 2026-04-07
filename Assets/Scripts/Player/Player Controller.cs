@@ -25,6 +25,24 @@ public class PlayerController : NetworkBehaviour
     private Vector2 gravityDir;
 
     public CameraFollow cameraPrefab;
+    private bool serverJumpHeld;
+    private bool serverJumpPressed;
+
+
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody2D>();
+    }
+
+    public override void OnStartServer()
+    {
+        bodies = FindObjectsOfType<GravityBody>();
+    }
+
+    public override void OnStartClient()
+    {
+        bodies = FindObjectsOfType<GravityBody>();
+    }
 
     public override void OnStartLocalPlayer()
     {
@@ -34,107 +52,115 @@ public class PlayerController : NetworkBehaviour
         cam.SetTarget(transform);
     }
 
-    private void Start()
-    {
-        bodies = FindObjectsOfType<GravityBody>();
-        //gravityEffects = this.GetComponent<GravityEffected>();
-        rb = GetComponent<Rigidbody2D>();
-    }
     private void Update()
     {
-        if(isLocalPlayer)
+        if(!isLocalPlayer) return;
+        Debug.Log("Im clienting it");
+        float xMove = Input.GetAxis("Horizontal");
+        float yMove = Input.GetAxis("Vertical");
+
+        moveInput = new Vector2(xMove, yMove).normalized;
+
+        bool jumpHeld = Input.GetButton("Jump");
+        bool jumpPressed = Input.GetButtonDown("Jump");
+
+        CMDMove(moveInput, jumpHeld, jumpPressed);
+
+
+        // Player Ground Check
+        nearestPlanet = GetClosetPlanet();
+
+        // Gravity direction
+        Vector2 gravityVector = nearestPlanet.position - new Vector2(transform.position.x, transform.position.y);
+        gravityDir = gravityVector.normalized;
+        SimpleDebugDraw.Arrow(transform.position, gravityDir * 2f, Color.white);
+
+        // Jumping and checks for on a planet
+        float distanceFromPlanet = gravityVector.magnitude;
+
+        if (distanceFromPlanet < nearestPlanet.size)
         {
-            float xMove = Input.GetAxis("Horizontal");
-            float yMove = Input.GetAxis("Vertical");
-
-            moveInput = new Vector2(xMove, yMove).normalized;
-
-            // Player Ground Check
-            nearestPlanet = GetClosetPlanet();
-
-            // Gravity direction
-            Vector2 gravityVector = nearestPlanet.position - new Vector2(transform.position.x, transform.position.y);
-            gravityDir = gravityVector.normalized;
-            SimpleDebugDraw.Arrow(transform.position, gravityDir * 2f, Color.white);
-
-            // Jumping and checks for on a planet
-            float distanceFromPlanet = gravityVector.magnitude;
-
-            if (distanceFromPlanet < nearestPlanet.size)
-            {
-                isGrounded = true;
-            }
-            else
-            {
-                isGrounded = false;
-            }
-            SimpleDebugDraw.Arrow(transform.position, rb.velocity, Color.blue);
-            if (isGrounded && Input.GetButtonDown("Jump"))
-            {
-                SimpleDebugDraw.Arrow(transform.position, -gravityDir * jumpForce, Color.blue);
-
-                rb.velocity = -gravityDir * jumpForce;
-            }
-
-            // Mouse input
-            Vector3 mouseScreenPosition = Input.mousePosition;
+            isGrounded = true;
         }
+        else
+        {
+            isGrounded = false;
+        }
+        SimpleDebugDraw.Arrow(transform.position, rb.velocity, Color.blue);
+        if (isGrounded && Input.GetButtonDown("Jump"))
+        {
+            SimpleDebugDraw.Arrow(transform.position, -gravityDir * jumpForce, Color.blue);
+
+            rb.velocity = -gravityDir * jumpForce;
+        }
+
+        // Mouse input
+        Vector3 mouseScreenPosition = Input.mousePosition;
+        
     }
     private void FixedUpdate()
     {
-        if (isLocalPlayer)
+        if (!isServer) return;
+        
+        // Legacy code
+
+        //rb.AddForce(moveInput * acceleration, ForceMode2D.Force);
+        // Apperently this prefents drift buildup
+        /**
+        if (rb.velocity.magnitude > moveSpeed)
         {
-            // Legacy code
-
-            //rb.AddForce(moveInput * acceleration, ForceMode2D.Force);
-            // Apperently this prefents drift buildup
-            /**
-            if (rb.velocity.magnitude > moveSpeed)
-            {
-                rb.velocity = rb.velocity.normalized * moveSpeed; // Keep the momentum and keep going!
-            }
-            */
-
-
-            // Movement on planet
-            if (isGrounded && (Input.GetKey("a") || Input.GetKey("d")))
-            {
-                Vector2 tangent = gravityDir.Perpendicular2();
-                SimpleDebugDraw.Arrow(transform.position, tangent * moveInput.x * moveSpeed, Color.green);
-                rb.AddForce(tangent * moveInput.x * moveSpeed);
-            }
-
-            // Movement in space left and right (still janky but works, idk about adding forces in the left and right) 
-            // IDEA: Maybe cursor will be what rotates and rotate code goes there
-            if (!isGrounded && (Input.GetKey("a") || Input.GetKey("d")))
-            {
-                Vector2 moveDirection = (moveInput.x * transform.right * moveSpeed).normalized;
-                SimpleDebugDraw.Arrow(transform.position, transform.right * moveInput.x * moveSpeed, Color.green);
-                rb.AddForce(moveInput.x * transform.right * moveSpeed);
-
-                float targetAngle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg - 90f;
-                Quaternion targetRotation = Quaternion.Euler(0, 0, targetAngle);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationForce);
-            }
-
-
-            // Flying Up
-            if (!isGrounded && Input.GetButton("Jump"))
-            {
-                SimpleDebugDraw.Arrow(transform.position, transform.up * flyAccel, Color.green);
-                rb.AddForce(transform.up * flyAccel);
-            }
-
-            // Slowing Down (Might need tweaks or maybe not add)
-            if (!isGrounded && Input.GetKey("s"))
-            {
-                SimpleDebugDraw.Arrow(transform.position, -transform.up * flyAccel, Color.green);
-                rb.AddForce(-transform.up * flyAccel);
-            }
-
-            // Near planet effects
-            AlignPlayerToClosestGravity();
+            rb.velocity = rb.velocity.normalized * moveSpeed; // Keep the momentum and keep going!
         }
+        */
+
+
+        // Movement on planet
+        if (isGrounded && (Input.GetKey("a") || Input.GetKey("d")))
+        {
+            Vector2 tangent = gravityDir.Perpendicular2();
+            SimpleDebugDraw.Arrow(transform.position, tangent * moveInput.x * moveSpeed, Color.green);
+            rb.AddForce(tangent * moveInput.x * moveSpeed);
+        }
+
+        // Movement in space left and right (still janky but works, idk about adding forces in the left and right) 
+        // IDEA: Maybe cursor will be what rotates and rotate code goes there
+        if (!isGrounded && (Input.GetKey("a") || Input.GetKey("d")))
+        {
+            Vector2 moveDirection = (moveInput.x * transform.right * moveSpeed).normalized;
+            SimpleDebugDraw.Arrow(transform.position, transform.right * moveInput.x * moveSpeed, Color.green);
+            rb.AddForce(moveInput.x * transform.right * moveSpeed);
+
+            float targetAngle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg - 90f;
+            Quaternion targetRotation = Quaternion.Euler(0, 0, targetAngle);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationForce);
+        }
+
+
+        // Flying Up
+        if (!isGrounded && Input.GetButton("Jump"))
+        {
+            SimpleDebugDraw.Arrow(transform.position, transform.up * flyAccel, Color.green);
+            rb.AddForce(transform.up * flyAccel);
+        }
+
+        // Slowing Down (Might need tweaks or maybe not add)
+        if (!isGrounded && Input.GetKey("s"))
+        {
+            SimpleDebugDraw.Arrow(transform.position, -transform.up * flyAccel, Color.green);
+            rb.AddForce(-transform.up * flyAccel);
+        }
+
+        // Near planet effects
+        AlignPlayerToClosestGravity();
+        
+    }
+    [Command]
+    private void CMDMove(Vector2 input, bool jumpHeld, bool jumpPressed)
+    {
+        Debug.Log("MOve Command!");
+        moveInput = input;
+        serverJumpHeld = jumpHeld;
+        serverJumpPressed = jumpPressed;
     }
     
     private void AlignPlayerToClosestGravity()

@@ -13,8 +13,6 @@ public class ProjectileBase : MonoBehaviour
         projData = projectileData;
         sprite = this.GetComponent<SpriteRenderer>();
         rb = this.GetComponent<Rigidbody2D>();
-        sprite.enabled = false;
-        rb.simulated = false;
     }
 
     public void updateVelocity(Vector2 direction)

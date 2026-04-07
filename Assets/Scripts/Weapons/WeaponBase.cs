@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 
-public class WeaponBase : NetworkBehaviour, IWeapon
+public class WeaponBase : MonoBehaviour, IWeapon
 {
     protected WeaponHandler handler;
     public GunData gunData;

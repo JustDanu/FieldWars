@@ -10,8 +10,13 @@ public class GunWeapon : WeaponBase
     public Transform firePoint;
     private float nextFire;
     private Vector2 dir;
-    private ProjectileBase currentProjectile;
+    private bool projectileSpawned;
+    private List<BodyState> projectileDraw = new List<BodyState>();
 
+    void Start()
+    {
+        
+    }
     public override void TriggerPress(Vector2 dir)
     {
         Debug.Log("" + dir);
@@ -54,38 +59,49 @@ public class GunWeapon : WeaponBase
     {
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
 
-        var projObj = Instantiate(
-            gunData.projectileData.prefab,
-            firePoint.position,
-            Quaternion.Euler(0, 0, angle)
-        );
-        currentProjectile = projObj.GetComponent<ProjectileBase>();
+        // A little funky but should work for this gun of one projectile.
+        BodyState projectilePrediction = new BodyState
+        {
+            position = firePoint.position,
+            velocity = dir * gunData.projectileData.speed,
+            mass = gunData.projectileData.mass,
+            affectsGravity = false,
+            affectedByGravity = true
 
-        currentProjectile.dir = dir;
-        currentProjectile.Initialize(gunData.projectileData);
-        NetworkServer.Spawn(projObj);
+        };
+        projectileDraw.Add(projectilePrediction);
+
+        projectileSpawned = true;
     }
 
     void UpdateAiming()
     {
-        if (currentProjectile == null) return;
+        if (!projectileSpawned) return;
 
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
 
-        currentProjectile.transform.position = firePoint.position;
-        currentProjectile.transform.rotation = Quaternion.Euler(0, 0, angle);
+        for(int i = 0; i < projectileDraw.Count; i++)
+        {
+            projectileDraw[i] = new BodyState
+            {
+                position = firePoint.position,
+                velocity = dir * gunData.projectileData.speed,
+                mass = gunData.projectileData.mass,
+                affectsGravity = false,
+                affectedByGravity = true
 
-        currentProjectile.updateVelocity(dir);
-        OrbitVisualizor.Instance.drawNextSteps(1000);
+            };;
+        }
+        OrbitVisualizor.Instance.drawNextSteps(1000, projectileDraw);
         
     }
 
     void ReleaseShot()
     {
-        if (currentProjectile == null) return;
+        if (!projectileSpawned) return;
+        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        handler.CMDReleaseProj(projectileDraw[0].velocity, projectileDraw[0].position, angle);
 
-        currentProjectile.enableObject();
-
-        currentProjectile = null;
+        projectileSpawned = false;
     }
 }

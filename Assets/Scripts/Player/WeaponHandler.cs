@@ -8,6 +8,7 @@ public class WeaponHandler : NetworkBehaviour
 {
     public Transform weaponSlot;
     public WeaponBase currentWeapon;
+    private ProjectileBase currentProjectile;
     // Temp
     [SerializeField] private float radius = 1.5f;
     private Camera cam;
@@ -48,6 +49,49 @@ public class WeaponHandler : NetworkBehaviour
         currentWeapon?.UpdateWeapon(dir);
 
         RotateWeapon();
+    }
+
+    [Command]
+    public void CMDAimProjectile(GameObject projPrefab, Vector3 position, float rotation)
+    {
+        var projObj = Instantiate(
+            projPrefab,
+            position,
+            Quaternion.Euler(0, 0, rotation)
+        );
+
+        currentProjectile = projObj.GetComponent<ProjectileBase>();
+        currentProjectile.Initialize(starterGun.projectileData);
+        NetworkServer.Spawn(projObj);
+    }
+
+    [Command]
+    public void CMDUpdateProjV()
+    {
+        if(currentProjectile == null) return;
+
+        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+
+        currentProjectile.transform.rotation = Quaternion.Euler(0, 0, angle);
+
+        currentProjectile.updateVelocity(dir);
+    }
+
+    [Command]
+    public void CMDReleaseProj(Vector2 velocityDirection, Vector2 pos, float rotation)
+    {
+        var projObj = Instantiate(
+            starterGun.projectileData.prefab,
+            pos,
+            Quaternion.Euler(0, 0, rotation)
+        );
+
+        NetworkServer.Spawn(projObj);
+        
+        currentProjectile = projObj.GetComponent<ProjectileBase>();
+        currentProjectile.Initialize(starterGun.projectileData);
+        currentProjectile.rb.velocity = velocityDirection;
+        
     }
 
     private void RotateWeapon()

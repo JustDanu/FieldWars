@@ -6,10 +6,14 @@ public class OrbitVisualizor : MonoBehaviour
 {
     [SerializeField]
     private int numSteps;
+    [SerializeField]
+    private TrajectoryDrawer drawerPrefab;
+    private List<TrajectoryDrawer> drawers = new List<TrajectoryDrawer>();
     private GravityBody[] bodies;
     private GravityPlanet[] sources;
 
     public static OrbitVisualizor Instance;
+
 
     void Awake()
     {
@@ -20,15 +24,25 @@ public class OrbitVisualizor : MonoBehaviour
     {
         
     }
-    private void OnValidate()
+
+    private void EnsureDrawerCount(int count)
     {
-        List<List<Vector2>> paths = PredictOrbits(numSteps);
-        DrawCurrentSteps(paths);
+        while (drawers.Count < count)
+        {
+            var drawer = Instantiate(drawerPrefab, transform);
+            drawers.Add(drawer);
+        }
     }
 
-    public void drawNextSteps(int steps)
+    private void OnValidate()
     {
-        List<List<Vector2>> paths = PredictOrbits(steps);
+        //List<List<Vector2>> paths = PredictOrbits(numSteps, null);
+        //DrawCurrentSteps(paths);
+    }
+
+    public void drawNextSteps(int steps, List<BodyState> extraBodies = null)
+    {
+        List<List<Vector2>> paths = PredictOrbits(steps, extraBodies);
         DrawCurrentSteps(paths);
     }
    
@@ -37,7 +51,7 @@ public class OrbitVisualizor : MonoBehaviour
     // changing positions in fixedUpdate might be janky because without RB there would be no
     // collisions which means the player wont be able to stand on planets n shi, so gotta make
     // a script that changed the velocity of the RB between predictions.
-    private List<List<Vector2>> PredictOrbits(int steps)
+    private List<List<Vector2>> PredictOrbits(int steps, List<BodyState> extraBodies)
     {
         bodies = FindObjectsOfType<GravityBody>();
 
@@ -49,38 +63,27 @@ public class OrbitVisualizor : MonoBehaviour
             bodyStates.Add(b.GetState());
         }
 
+        // Add extra predicted bodies from GPT
+        if (extraBodies != null)
+        {
+            bodyStates.AddRange(extraBodies);
+        }
+
         return new List<List<Vector2>>(TrajectorySimulator.Predict(bodyStates, steps, Time.fixedDeltaTime));
     }
 
     private void DrawCurrentSteps(List<List<Vector2>> paths)
     {
-        foreach (var body in bodies)
+        EnsureDrawerCount(paths.Count);
+
+        for(int i = 0; i < paths.Count; i++)
         {
-            
-            LineRenderer line = body.GetComponent<LineRenderer>();
-            if (line == null)
-            {
-                line = body.gameObject.AddComponent<LineRenderer>();
-            }
-            line.widthMultiplier = 2f;
-            line.useWorldSpace = true;
-            line.positionCount = 0;
+            drawers[i].Draw(paths[i]);
         }
 
-        for (int i = 0; i < bodies.Length; i++)
+        for(int i = paths.Count; i < drawers.Count; i++)
         {
-            var path = paths[i];
-            var body = bodies[i];
-
-            LineRenderer line = body.GetComponent<LineRenderer>();
-            if (line == null) continue;
-
-            line.positionCount = path.Count;
-
-            for (int j = 0; j < path.Count; j++)
-            {
-                line.SetPosition(j, new Vector3(path[j].x, path[j].y, 0));
-            }
+            drawers[i].Clear();
         }
     }
     private void DrawX(Vector3 position)
