@@ -44,13 +44,12 @@ GameObject:
   - component: {fileID: 1241872304852793844}
   - component: {fileID: 1488050885629925820}
   - component: {fileID: 1533136697520598272}
-  - component: {fileID: -5172581125813873800}
   - component: {fileID: -7364985505321873434}
   - component: {fileID: 5918904539289723838}
   - component: {fileID: 8021558602389388236}
   - component: {fileID: 2912598170140221114}
   - component: {fileID: 7008124971875202752}
-  - component: {fileID: 582943494155669507}
+  - component: {fileID: 8118680523985161442}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -189,39 +188,6 @@ MonoBehaviour:
   - {fileID: 0}
   mass: 150
   initialVelocity: {x: 0, y: 6}
---- !u!114 &-5172581125813873800
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7928723650747581274}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  target: {fileID: 2268220220562513151}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  timelineOffset: 1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
 --- !u!50 &-7364985505321873434
 Rigidbody2D:
   serializedVersion: 4
@@ -428,7 +394,7 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
---- !u!114 &582943494155669507
+--- !u!114 &8118680523985161442
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -437,7 +403,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7928723650747581274}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ec4f7556ca1e4b55a3381fc6a02b1bc, type: 3}
+  m_Script: {fileID: 11500000, guid: 1c7e12ad9b9ae443c9fdf37e9f5ecd36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncDirection: 0
@@ -457,7 +423,7 @@ MonoBehaviour:
   showGizmos: 0
   showOverlay: 0
   overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
+  bufferResetMultiplier: 3
+  positionSensitivity: 0.01
   rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
+  scaleSensitivity: 0.01

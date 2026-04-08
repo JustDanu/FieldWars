@@ -2,6 +2,7 @@ using UnityEngine;
 using Mirror;
 using Unity.VisualScripting;
 using Unity.Mathematics;
+using System;
 
 public class PlayerController : NetworkBehaviour
 {
@@ -55,17 +56,21 @@ public class PlayerController : NetworkBehaviour
     private void Update()
     {
         if(!isLocalPlayer) return;
-        Debug.Log("Im clienting it");
+
         float xMove = Input.GetAxis("Horizontal");
         float yMove = Input.GetAxis("Vertical");
 
-        moveInput = new Vector2(xMove, yMove).normalized;
+        Vector3 input = new Vector2(xMove, yMove).normalized;
 
         bool jumpHeld = Input.GetButton("Jump");
         bool jumpPressed = Input.GetButtonDown("Jump");
 
-        CMDMove(moveInput, jumpHeld, jumpPressed);
+        //Debug.Log("" + moveInput);
+        Debug.Log("Has Authority: " + this.isOwned);
+        Debug.Log("Is Local Player: " + isLocalPlayer);
+        Debug.Log("Is Server: " + isServer);
 
+        CMDMove(input, jumpHeld, jumpPressed);
 
         // Player Ground Check
         nearestPlanet = GetClosetPlanet();
@@ -87,12 +92,6 @@ public class PlayerController : NetworkBehaviour
             isGrounded = false;
         }
         SimpleDebugDraw.Arrow(transform.position, rb.velocity, Color.blue);
-        if (isGrounded && Input.GetButtonDown("Jump"))
-        {
-            SimpleDebugDraw.Arrow(transform.position, -gravityDir * jumpForce, Color.blue);
-
-            rb.velocity = -gravityDir * jumpForce;
-        }
 
         // Mouse input
         Vector3 mouseScreenPosition = Input.mousePosition;
@@ -101,21 +100,9 @@ public class PlayerController : NetworkBehaviour
     private void FixedUpdate()
     {
         if (!isServer) return;
-        
-        // Legacy code
-
-        //rb.AddForce(moveInput * acceleration, ForceMode2D.Force);
-        // Apperently this prefents drift buildup
-        /**
-        if (rb.velocity.magnitude > moveSpeed)
-        {
-            rb.velocity = rb.velocity.normalized * moveSpeed; // Keep the momentum and keep going!
-        }
-        */
-
 
         // Movement on planet
-        if (isGrounded && (Input.GetKey("a") || Input.GetKey("d")))
+        if (isGrounded)
         {
             Vector2 tangent = gravityDir.Perpendicular2();
             SimpleDebugDraw.Arrow(transform.position, tangent * moveInput.x * moveSpeed, Color.green);
@@ -124,7 +111,7 @@ public class PlayerController : NetworkBehaviour
 
         // Movement in space left and right (still janky but works, idk about adding forces in the left and right) 
         // IDEA: Maybe cursor will be what rotates and rotate code goes there
-        if (!isGrounded && (Input.GetKey("a") || Input.GetKey("d")))
+        if (!isGrounded)
         {
             Vector2 moveDirection = (moveInput.x * transform.right * moveSpeed).normalized;
             SimpleDebugDraw.Arrow(transform.position, transform.right * moveInput.x * moveSpeed, Color.green);
@@ -137,7 +124,7 @@ public class PlayerController : NetworkBehaviour
 
 
         // Flying Up
-        if (!isGrounded && Input.GetButton("Jump"))
+        if (!isGrounded && serverJumpHeld)
         {
             SimpleDebugDraw.Arrow(transform.position, transform.up * flyAccel, Color.green);
             rb.AddForce(transform.up * flyAccel);
@@ -150,14 +137,22 @@ public class PlayerController : NetworkBehaviour
             rb.AddForce(-transform.up * flyAccel);
         }
 
+        if (isGrounded && serverJumpPressed)
+        {
+            SimpleDebugDraw.Arrow(transform.position, -gravityDir * jumpForce, Color.blue);
+
+            rb.velocity = -gravityDir * jumpForce;
+        }
+
         // Near planet effects
         AlignPlayerToClosestGravity();
         
     }
+
     [Command]
     private void CMDMove(Vector2 input, bool jumpHeld, bool jumpPressed)
     {
-        Debug.Log("MOve Command!");
+        //Debug.Log("MOve Command!");
         moveInput = input;
         serverJumpHeld = jumpHeld;
         serverJumpPressed = jumpPressed;
@@ -172,10 +167,12 @@ public class PlayerController : NetworkBehaviour
 
         if(distanceFromPlanet < closestPlanet.size)
         {
+            
             Vector2 gravityDirection = distanceVector.normalized;
 
             float angle = Mathf.Atan2(gravityDirection.y, gravityDirection.x) * Mathf.Rad2Deg + 90f;
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, 0, angle), Time.deltaTime * planetAlignmentSpeed);
+            Debug.Log("Alliging player!" + gravityDirection);
         }
         
     }
