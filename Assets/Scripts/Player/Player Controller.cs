@@ -26,8 +26,10 @@ public class PlayerController : NetworkBehaviour
     private Vector2 gravityDir;
 
     public CameraFollow cameraPrefab;
+    [SerializeField]
     private bool serverJumpHeld;
-    private bool serverJumpPressed;
+    [SerializeField]
+    private bool serverJumpReleased;
 
 
     private void Awake()
@@ -62,17 +64,22 @@ public class PlayerController : NetworkBehaviour
 
         Vector3 input = new Vector2(xMove, yMove).normalized;
 
-        bool jumpHeld = Input.GetButton("Jump");
-        bool jumpPressed = Input.GetButtonDown("Jump");
+        bool jumpHeld = false, jumpReleased = false;
 
-        //Debug.Log("" + moveInput);
-        Debug.Log("Has Authority: " + this.isOwned);
-        Debug.Log("Is Local Player: " + isLocalPlayer);
-        Debug.Log("Is Server: " + isServer);
+        if(Input.GetButton("Jump")) jumpHeld = true;
+        
+        if(Input.GetButtonUp("Jump")) jumpReleased = true;
 
-        CMDMove(input, jumpHeld, jumpPressed);
+        CMDMove(input, jumpHeld, jumpReleased);
 
-        // Player Ground Check
+        // Mouse input
+        Vector3 mouseScreenPosition = Input.mousePosition;
+        
+    }
+    private void FixedUpdate()
+    {
+        if (!isServer) return;
+
         nearestPlanet = GetClosetPlanet();
 
         // Gravity direction
@@ -93,14 +100,6 @@ public class PlayerController : NetworkBehaviour
         }
         SimpleDebugDraw.Arrow(transform.position, rb.velocity, Color.blue);
 
-        // Mouse input
-        Vector3 mouseScreenPosition = Input.mousePosition;
-        
-    }
-    private void FixedUpdate()
-    {
-        if (!isServer) return;
-
         // Movement on planet
         if (isGrounded)
         {
@@ -111,15 +110,15 @@ public class PlayerController : NetworkBehaviour
 
         // Movement in space left and right (still janky but works, idk about adding forces in the left and right) 
         // IDEA: Maybe cursor will be what rotates and rotate code goes there
-        if (!isGrounded)
+        if (!isGrounded && moveInput.x != 0)
         {
-            Vector2 moveDirection = (moveInput.x * transform.right * moveSpeed).normalized;
+            Vector2 moveDirection = (moveInput.x * transform.right).normalized;
             SimpleDebugDraw.Arrow(transform.position, transform.right * moveInput.x * moveSpeed, Color.green);
             rb.AddForce(moveInput.x * transform.right * moveSpeed);
 
             float targetAngle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg - 90f;
             Quaternion targetRotation = Quaternion.Euler(0, 0, targetAngle);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationForce);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.fixedDeltaTime * rotationForce);
         }
 
 
@@ -137,11 +136,13 @@ public class PlayerController : NetworkBehaviour
             rb.AddForce(-transform.up * flyAccel);
         }
 
-        if (isGrounded && serverJumpPressed)
+        if (isGrounded && serverJumpReleased)
         {
             SimpleDebugDraw.Arrow(transform.position, -gravityDir * jumpForce, Color.blue);
 
             rb.velocity = -gravityDir * jumpForce;
+
+            serverJumpReleased = false;
         }
 
         // Near planet effects
@@ -155,7 +156,7 @@ public class PlayerController : NetworkBehaviour
         //Debug.Log("MOve Command!");
         moveInput = input;
         serverJumpHeld = jumpHeld;
-        serverJumpPressed = jumpPressed;
+        if(jumpPressed && isGrounded) serverJumpReleased = true;
     }
     
     private void AlignPlayerToClosestGravity()
@@ -172,7 +173,6 @@ public class PlayerController : NetworkBehaviour
 
             float angle = Mathf.Atan2(gravityDirection.y, gravityDirection.x) * Mathf.Rad2Deg + 90f;
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, 0, angle), Time.deltaTime * planetAlignmentSpeed);
-            Debug.Log("Alliging player!" + gravityDirection);
         }
         
     }
@@ -183,7 +183,7 @@ public class PlayerController : NetworkBehaviour
         Vector2 difference = Vector2.zero;
         foreach (var body in bodies)
         {
-            if(this.gameObject == body.gameObject) continue; // Skip player checking itself
+            if(this.gameObject == body.gameObject || !body.affectsGravity) continue; // Skip player checking itself or checking for something that doesnt gravity
 
             if (closestPlanet.Equals(new BodyState()))
             {

@@ -305,6 +305,77 @@ Rigidbody2D:
   m_CorrespondingSourceObject: {fileID: 2395325600663714536, guid: 16407da9fc1ed7647b5c018e901b7542, type: 3}
   m_PrefabInstance: {fileID: 438005197}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &29677302 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3516804566988103850, guid: 16407da9fc1ed7647b5c018e901b7542, type: 3}
+  m_PrefabInstance: {fileID: 438005197}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &29677303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 29677284}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a553cb17010b2403e8523b558bffbc14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 1
+  syncMode: 0
+  syncInterval: 0
+  target: {fileID: 29677302}
+  syncPosition: 1
+  syncRotation: 1
+  syncScale: 0
+  onlySyncOnChange: 1
+  compressRotation: 1
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 1
+  coordinateSpace: 0
+  timelineOffset: 1
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+  bufferResetMultiplier: 3
+  positionSensitivity: 0.01
+  rotationSensitivity: 0.01
+  scaleSensitivity: 0.01
+--- !u!114 &29677304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 29677284}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c7e12ad9b9ae443c9fdf37e9f5ecd36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  target: {fileID: 29677302}
+  syncPosition: 1
+  syncRotation: 1
+  syncScale: 0
+  onlySyncOnChange: 1
+  compressRotation: 1
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 1
+  coordinateSpace: 0
+  timelineOffset: 1
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+  bufferResetMultiplier: 3
+  positionSensitivity: 0.01
+  rotationSensitivity: 0.01
+  scaleSensitivity: 0.01
 --- !u!1 &81874271 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8734093632797640681, guid: 16407da9fc1ed7647b5c018e901b7542, type: 3}
@@ -488,6 +559,77 @@ Rigidbody2D:
   m_CorrespondingSourceObject: {fileID: 2395325600663714536, guid: 16407da9fc1ed7647b5c018e901b7542, type: 3}
   m_PrefabInstance: {fileID: 734376100}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &81874287 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3516804566988103850, guid: 16407da9fc1ed7647b5c018e901b7542, type: 3}
+  m_PrefabInstance: {fileID: 734376100}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &81874288
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 81874271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c7e12ad9b9ae443c9fdf37e9f5ecd36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  target: {fileID: 81874287}
+  syncPosition: 1
+  syncRotation: 1
+  syncScale: 0
+  onlySyncOnChange: 1
+  compressRotation: 1
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 1
+  coordinateSpace: 0
+  timelineOffset: 1
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+  bufferResetMultiplier: 3
+  positionSensitivity: 0.01
+  rotationSensitivity: 0.01
+  scaleSensitivity: 0.01
+--- !u!114 &81874289
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 81874271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a553cb17010b2403e8523b558bffbc14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 1
+  syncMode: 0
+  syncInterval: 0
+  target: {fileID: 81874287}
+  syncPosition: 1
+  syncRotation: 1
+  syncScale: 0
+  onlySyncOnChange: 1
+  compressRotation: 1
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 1
+  coordinateSpace: 0
+  timelineOffset: 1
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+  bufferResetMultiplier: 3
+  positionSensitivity: 0.01
+  rotationSensitivity: 0.01
+  scaleSensitivity: 0.01
 --- !u!1 &126283419
 GameObject:
   m_ObjectHideFlags: 0
@@ -816,6 +958,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8734093632797640681, guid: 16407da9fc1ed7647b5c018e901b7542, type: 3}
       insertIndex: -1
       addedObject: {fileID: 29677298}
+    - targetCorrespondingSourceObject: {fileID: 8734093632797640681, guid: 16407da9fc1ed7647b5c018e901b7542, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 29677304}
+    - targetCorrespondingSourceObject: {fileID: 8734093632797640681, guid: 16407da9fc1ed7647b5c018e901b7542, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 29677303}
   m_SourcePrefab: {fileID: 100100000, guid: 16407da9fc1ed7647b5c018e901b7542, type: 3}
 --- !u!1 &501878731
 GameObject:
@@ -1283,6 +1431,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8734093632797640681, guid: 16407da9fc1ed7647b5c018e901b7542, type: 3}
       insertIndex: -1
       addedObject: {fileID: 81874282}
+    - targetCorrespondingSourceObject: {fileID: 8734093632797640681, guid: 16407da9fc1ed7647b5c018e901b7542, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 81874289}
+    - targetCorrespondingSourceObject: {fileID: 8734093632797640681, guid: 16407da9fc1ed7647b5c018e901b7542, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 81874288}
   m_SourcePrefab: {fileID: 100100000, guid: 16407da9fc1ed7647b5c018e901b7542, type: 3}
 --- !u!1 &1873081191
 GameObject:

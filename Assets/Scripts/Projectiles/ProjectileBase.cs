@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 
-public class ProjectileBase : MonoBehaviour
+public class ProjectileBase : NetworkBehaviour
 {
     protected ProjectileData projData;
     public Rigidbody2D rb;
@@ -32,5 +33,19 @@ public class ProjectileBase : MonoBehaviour
     {
         float angle = Mathf.Atan2(rb.velocity.y, rb.velocity.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0, 0, angle);
+    }
+
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        if (!isServer) return;
+
+        PlayerHealth health = col.GetComponent<PlayerHealth>();
+        if (health != null)
+        {
+            Debug.Log("Took Damage");
+            health.TakeDamage(projData.damage);
+        }
+
+        NetworkServer.Destroy(gameObject);
     }
 }
